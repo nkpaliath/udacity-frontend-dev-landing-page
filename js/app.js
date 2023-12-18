@@ -41,7 +41,13 @@ const createNavLinks = () => {
   sections.forEach((section) => {
     const navDataset = section.dataset.nav;
     const li = document.createElement("li");
-    li.innerHTML = `<a href="#${section.id}" class="menu__link">${navDataset}</a>`;
+    let menuItemClass = "";
+    if (section.id === "section1") {
+      menuItemClass = "menu__link menu__link__active";
+    } else {
+      menuItemClass = "menu__link";
+    }
+    li.innerHTML = `<a href="#${section.id}" class="${menuItemClass}">${navDataset}</a>`;
     fragment.appendChild(li);
   });
 
@@ -85,24 +91,36 @@ navbarList.addEventListener("click", updateNavBarHandler);
 const scrollEventHandler = () => {
   const sections = getDataNavSections();
   const mainHeading = document.querySelector(".main__hero").firstElementChild;
-
+  const sectionLinks = document.querySelectorAll(".menu__link");
   const rectMainHeading = mainHeading.getBoundingClientRect();
   if (rectMainHeading.top >= DEFAULT_VALUE) {
     // This condition is added to make sure that the first section retains the default active class
     const section1 = document.querySelector("#section1");
     if (!section1.classList.contains("active__section")) {
       section1.classList.add("active__section");
+      sectionLinks[0].classList.add("menu__link__active");
     }
   } else {
     sections.forEach((section) => {
       const rectSection = section.getBoundingClientRect();
+
       if (rectSection.top <= TOP_VALUE && rectSection.bottom >= BOTTOM_VALUE) {
         if (!section.classList.contains("active__section")) {
           section.classList.add("active__section");
+          sectionLinks.forEach((link) => {
+            if (link.textContent === section.dataset.nav) {
+              link.classList.add("menu__link__active");
+            }
+          });
         }
       } else {
         if (section.classList.contains("active__section")) {
           section.classList.remove("active__section");
+          sectionLinks.forEach((link) => {
+            if (link.textContent === section.dataset.nav) {
+              link.classList.remove("menu__link__active");
+            }
+          });
         }
       }
     });
